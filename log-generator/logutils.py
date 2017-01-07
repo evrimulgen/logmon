@@ -12,11 +12,11 @@ METHODS = [
 ]
 
 URIS = [
-    ["http://my.site.com/pages/create", 0.1],
-    ["http://my.site.com/pages/update", 0.1],
-    ["http://my.site.com/pages/delete", 0.1],
-    ["http://my.site.com/login", 0.1],
-    ["http://my.site.com/register", 0.6],
+    ["my.site.com/pages/create", 0.1],
+    ["my.site.com/pages/update", 0.1],
+    ["my.site.com/pages/delete", 0.1],
+    ["my.site.com/login", 0.1],
+    ["my.site.com/register", 0.6],
 ]
 
 STATUS = [
