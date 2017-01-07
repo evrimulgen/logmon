@@ -4,9 +4,12 @@ import (
     "log"
     "strconv"
     "os"
+    "sync"
 
-    "github.com/hpcloud/tail"
+    "github.com/gabsn/logmon/routines"
 )
+
+var wg sync.WaitGroup
 
 func main() {
     if len(os.Args) != 3 {
@@ -19,14 +22,7 @@ func main() {
     }
     println(threshold)
 
-    t, err := tail.TailFile(logPath, tail.Config{
-		Follow:   true,
-		ReOpen:   true,
-	})
-	if err != nil {
-        log.Fatalln(err)
-	}
-	for line := range t.Lines {
-        println(line.Text)
-	}
+    wg.Add(1)
+    go routines.ReadLogFile(logPath)
+    wg.Wait()
 }
