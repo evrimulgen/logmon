@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/gabsn/logmon/feeder"
+	"github.com/gabsn/logmon/models"
 )
 
 var wg sync.WaitGroup
@@ -16,13 +17,12 @@ func main() {
 		log.Fatalln("Usage:\n\n\tlogmon [logPath] [threshold]\n")
 	}
 	logPath := os.Args[1]
-	threshold, err := strconv.Atoi(os.Args[2])
+	_, err := strconv.Atoi(os.Args[2])
 	if err != nil {
 		log.Fatalln(err)
 	}
-	println(threshold)
-
+    cb := models.NewCircularBuffer(12)
 	wg.Add(1)
-	go feeder.ReadLogFile(logPath)
+	go feeder.ReadLogFile(logPath, cb)
 	wg.Wait()
 }

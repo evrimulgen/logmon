@@ -2,7 +2,6 @@ package feeder
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -10,8 +9,6 @@ import (
 
 	"github.com/gabsn/logmon/models"
 )
-
-type Hit models.Hit
 
 var fields []string
 
@@ -23,7 +20,7 @@ var (
 )
 
 // Parse a line into a Hit struct and Hits CircularBuffer
-func parse(line string) {
+func parse(line string, cb *models.CircularBuffer) {
 	if fields == nil {
 		parseHeader(line)
 	} else {
@@ -32,7 +29,7 @@ func parse(line string) {
 			log.Println(err)
 			return
 		}
-		fmt.Println(hit.Dt.String(), hit.Section)
+        hit.Hits(cb)
 	}
 }
 
@@ -45,7 +42,7 @@ func parseHeader(line string) {
 }
 
 // Parse a log line into the corresponding Hit struct
-func parseToHit(line string) (Hit, error) {
+func parseToHit(line string) (models.Hit, error) {
 	var date, time, uri string
 	hitFields := strings.Split(line, " ")
 	for k, v := range fields {
@@ -60,13 +57,13 @@ func parseToHit(line string) (Hit, error) {
 	}
 	dt, err := getDateTime(date, time)
 	if err != nil {
-		return Hit{}, err
+		return models.Hit{}, err
 	}
 	section, err := getSection(uri)
 	if err != nil {
-		return Hit{}, err
+		return models.Hit{}, err
 	}
-	return Hit{dt, section}, nil
+	return models.Hit{dt, section}, nil
 }
 
 // Build a time.Time object from date and time fields extracted

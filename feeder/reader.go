@@ -4,10 +4,11 @@ import (
 	"log"
 
 	"github.com/hpcloud/tail"
+    "github.com/gabsn/logmon/models"
 )
 
 // Goroutine that consumes log.txt lines and send them to the parser
-func ReadLogFile(logPath string) {
+func ReadLogFile(logPath string, cb *models.CircularBuffer) {
 	t, err := tail.TailFile(logPath, tail.Config{
 		Follow: true,
 		ReOpen: true,
@@ -16,6 +17,6 @@ func ReadLogFile(logPath string) {
 		log.Fatalln(err)
 	}
 	for line := range t.Lines {
-		parse(line.Text)
+		parse(line.Text, cb)
 	}
 }
