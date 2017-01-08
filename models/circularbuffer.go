@@ -7,8 +7,8 @@ import (
 
 type CircularBuffer struct {
     sync.Mutex
-	TotalHits map[string]int
 	PeriodHits *ring.Ring
+	TotalHits map[string]int
 }
 
 func NewCircularBuffer(nbPeriod int) *CircularBuffer {
@@ -17,14 +17,14 @@ func NewCircularBuffer(nbPeriod int) *CircularBuffer {
 		r.Value = make(map[string]int)
 		r = r.Next()
 	}
-	return &CircularBuffer{sync.Mutex{}, make(map[string]int), r}
+	return &CircularBuffer{sync.Mutex{}, r, make(map[string]int)}
 }
 
 // Increments the counter of hits
 func (cb *CircularBuffer) HitBy(h Hit) {
     cb.Lock()
-    PerdiodHits[h.Section] += 1
-    TotalHits[h.Section] += 1
+    cb.PeriodHits.Value.(map[string]int)[h.Section] += 1
+    cb.TotalHits[h.Section] += 1
     cb.Unlock()
 }
 
