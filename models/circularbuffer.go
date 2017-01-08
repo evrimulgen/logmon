@@ -19,3 +19,22 @@ func NewCircularBuffer(nbPeriod int) *CircularBuffer {
 	}
 	return &CircularBuffer{sync.Mutex{}, make(map[string]int), r}
 }
+
+// Increments the counter of hits
+func (cb *CircularBuffer) HitBy(h Hit) {
+    cb.Lock()
+    PerdiodHits[h.Section] += 1
+    TotalHits[h.Section] += 1
+    cb.Unlock()
+}
+
+// Reset the period hits counters
+func (cb *CircularBuffer) Reset() {
+    cb.Lock()
+    r := cb.PeriodHits
+    for i := 0; i < r.Len(); i++ {
+		r.Value = make(map[string]int)
+		r = r.Next()
+	}
+    cb.Unlock()
+}
