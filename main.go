@@ -5,12 +5,18 @@ import (
 	"os"
 	"strconv"
 	"sync"
+    "time"
 
 	"github.com/gabsn/logmon/feeder"
 	"github.com/gabsn/logmon/models"
+	"github.com/gabsn/logmon/monitor"
 )
 
 var wg sync.WaitGroup
+
+const (
+    period = 10 * time.Second
+)
 
 func main() {
 	if len(os.Args) != 3 {
@@ -24,5 +30,6 @@ func main() {
     cb := models.NewCircularBuffer(12)
 	wg.Add(1)
 	go feeder.ReadLogFile(logPath, cb)
+    go monitor.Supervise(period, cb)
 	wg.Wait()
 }
