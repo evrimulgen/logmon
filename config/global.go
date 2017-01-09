@@ -1,10 +1,10 @@
 package config
 
 import (
-    "time"
+	"time"
 )
 
 const (
-    PERIOD = 10 * time.Second
-    NB_PERIOD = 2
+	PERIOD    = 10 * time.Second
+	NB_PERIOD = 2
 )

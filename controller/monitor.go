@@ -1,14 +1,14 @@
 package controller
 
 import (
-    "time"
+	"time"
 
-    "github.com/gabsn/logmon/models"
-    "github.com/gabsn/logmon/config"
+	"github.com/gabsn/logmon/config"
+	"github.com/gabsn/logmon/models"
 )
 
 func Monitor(threshold uint64, cb *models.CircularBuffer) {
-    for _ = range time.Tick(config.PERIOD) {
-        cb.NextPeriod(threshold)
-    }
+	for _ = range time.Tick(config.PERIOD) {
+		cb.NextPeriod(threshold)
+	}
 }

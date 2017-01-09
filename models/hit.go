@@ -1,10 +1,10 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
 type Hit struct {
-    Dt time.Time
-    Section string
+	Dt      time.Time
+	Section string
 }

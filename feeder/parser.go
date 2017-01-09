@@ -29,7 +29,7 @@ func parse(line string, cb *models.CircularBuffer) {
 			log.Println(err)
 			return
 		}
-        cb.HitBy(hit)
+		cb.HitBy(hit)
 	}
 }
 

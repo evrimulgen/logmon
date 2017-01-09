@@ -2,30 +2,30 @@ package models
 
 import (
 	"container/ring"
-    "sync"
-    "fmt"
-    "time"
+	"fmt"
+	"sync"
+	"time"
 
-    "github.com/gabsn/logmon/config"
+	"github.com/gabsn/logmon/config"
 )
 
 // Data structure holding hits information for the last 2 minutes
 type CircularBuffer struct {
-    sync.Mutex
-	periods *ring.Ring
+	sync.Mutex
+	periods   *ring.Ring
 	totalHits map[string]uint64
-    alert bool
+	alert     bool
 }
 
 // Data structure holding all information about a given period
 type Period struct {
-    hits map[string]uint64
-    nbHits uint64
+	hits   map[string]uint64
+	nbHits uint64
 }
 
 // Returns a new intialized Period
 func NewPeriod() *Period {
-    return &Period{make(map[string]uint64), 0}
+	return &Period{make(map[string]uint64), 0}
 }
 
 // Returns a new initialized CircularBuffer
@@ -40,37 +40,38 @@ func NewCircularBuffer() *CircularBuffer {
 
 // Increments the counter of hits
 func (cb *CircularBuffer) HitBy(h Hit) {
-    cb.Lock()
-    period := cb.periods.Value.(*Period)
-    period.hits[h.Section] += 1
-    period.nbHits += 1
-    cb.totalHits[h.Section] += 1
-    cb.Unlock()
+	cb.Lock()
+	period := cb.periods.Value.(*Period)
+	period.hits[h.Section] += 1
+	period.nbHits += 1
+	cb.totalHits[h.Section] += 1
+	cb.Unlock()
 }
 
-// Executes all monitoring tasks of one period and launch the next
+// Executes all monitoring tasks for a given period and launch the next one
 func (cb *CircularBuffer) NextPeriod(threshold uint64) {
-    cb.Lock()
-    // Check alert with the given threshold
-    cb.checkAlert(threshold)
-    // Display stats related to the period
-    cb.displayStats()
-    // Launch the next period
-    cb.periods = cb.periods.Next()
-    // Initialize the next period
-    cb.periods.Value = NewPeriod()
-    cb.Unlock()
+	cb.Lock()
+	// Check alert with the given threshold
+	cb.checkAlert(threshold)
+	// Display stats related to the period
+	cb.displayStats()
+	// Launch the next period
+	cb.periods = cb.periods.Next()
+	// Initialize the next period
+	cb.periods.Value = NewPeriod()
+	cb.Unlock()
 }
 
+// Private method in charge of the alert logic
 func (cb *CircularBuffer) checkAlert(threshold uint64) {
 	var totHits uint64
-    cb.periods.Do(func(x interface{}) {
+	cb.periods.Do(func(x interface{}) {
 		totHits += x.(*Period).nbHits
 	})
-    if totHits > threshold {
-        cb.alert = true
+	if totHits > threshold {
+		cb.alert = true
 		fmt.Printf("[WARN] High traffic generated an alert - hits = %v, triggered at %v\n", totHits, time.Now())
-    }
+	}
 	if cb.alert && totHits <= threshold {
 		cb.alert = false
 		fmt.Println("[WARN] Alert recovered.")
@@ -79,13 +80,13 @@ func (cb *CircularBuffer) checkAlert(threshold uint64) {
 
 // Display statistics related to a given period
 func (cb *CircularBuffer) displayStats() {
-    period := cb.periods.Value.(*Period)
-    averageNbHits := period.nbHits/uint64(len(period.hits))
-    fmt.Printf("[INFO] Sections most hit during the last %v (%v hits in average):\n", config.PERIOD, averageNbHits)
-    for k, v := range period.hits {
-        if v > averageNbHits {
-            fmt.Printf("\t-> %s: %v hits\n",  k, v)
-        }
-    }
-    fmt.Println()
+	period := cb.periods.Value.(*Period)
+	averageNbHits := period.nbHits / uint64(len(period.hits))
+	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits in average):\n", config.PERIOD, averageNbHits)
+	for k, v := range period.hits {
+		if v > averageNbHits {
+			fmt.Printf("\t-> %s: %v hits\n", k, v)
+		}
+	}
+	fmt.Println()
 }

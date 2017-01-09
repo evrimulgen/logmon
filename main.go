@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/gabsn/logmon/controller"
 	"github.com/gabsn/logmon/feeder"
 	"github.com/gabsn/logmon/models"
-	"github.com/gabsn/logmon/controller"
 )
 
 var wg sync.WaitGroup
@@ -22,9 +22,9 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-    cb := models.NewCircularBuffer()
+	cb := models.NewCircularBuffer()
 	wg.Add(2)
 	go feeder.ReadLogFile(logPath, cb)
-    go controller.Monitor(threshold, cb)
+	go controller.Monitor(threshold, cb)
 	wg.Wait()
 }

@@ -3,8 +3,8 @@ package feeder
 import (
 	"log"
 
+	"github.com/gabsn/logmon/models"
 	"github.com/hpcloud/tail"
-    "github.com/gabsn/logmon/models"
 )
 
 // Goroutine that consumes log.txt lines and send them to the parser
