@@ -1,3 +1,5 @@
+import random
+
 from datetime import datetime
 from numpy.random import choice
 
@@ -24,9 +26,9 @@ STATUS = [
     ["201", 0],
     ["301", 0],
     ["302", 0],
-    ["401", 0.05],
+    ["401", 0],
     ["404", 0],
-    ["500", 0.05],
+    ["500", 0.1],
 ]
 
 def getDate():
@@ -44,7 +46,10 @@ def getURI():
 def getStatus(): 
     return choice([i[0] for i in STATUS], p=[i[1] for i in STATUS])
 
-''' Write W3C log header '''
+def getSCBytes():
+    return str(int(random.uniform(0, 1000)))
+
+# Write W3C log header
 def writeLogHeader(f):
     dt = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
     fields = ""

@@ -12,7 +12,7 @@ LOG_FIELDS = [
     "cs-uri-stem",
 #    "cs-uri-query",
     "sc-status",
-#    "sc-bytes",
+    "sc-bytes",
 #    "cs-bytes",
 #    "time-taken",
 #    "cs(User-Agent)",

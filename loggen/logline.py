@@ -7,7 +7,6 @@ LOG_DATA = {
     "s-ip": "206.73.118.24", 
     "s-port": "80",
     "cs-uri-query": "-", 
-    "sc-bytes": "7930", 
     "cs-bytes": "248", 
     "time-taken": "31", 
     "cs(User-Agent)": "Mozilla/4.0+(compatible;+MSIE+5.01;+Windows+2000+Server)", 
@@ -23,6 +22,7 @@ class LogLine:
         self.data["cs-method"] = logutils.getMethod()
         self.data["cs-uri-stem"] = logutils.getURI()
         self.data["sc-status"] = logutils.getStatus()
+        self.data["sc-bytes"] = logutils.getSCBytes()
 
     def getLine(self):
         line = ""
