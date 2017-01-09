@@ -4,6 +4,8 @@ import (
 	"container/ring"
     "sync"
     "fmt"
+
+    "github.com/gabsn/logmon/config"
 )
 
 // Data structure holding hits information for the last 2 minutes
@@ -32,19 +34,8 @@ func (cb *CircularBuffer) HitBy(h Hit) {
     cb.Unlock()
 }
 
-// Reset the period hits counters
-func (cb *CircularBuffer) Reset() {
-    cb.Lock()
-    r := cb.periodHits
-    for i := 0; i < r.Len(); i++ {
-		r.Value = make(map[string]int)
-		r = r.Next()
-	}
-    cb.Unlock()
-}
-
 // Display sections most hit during the last 10s and next Period
-func (cb *CircularBuffer) DisplaySectionsMostHitAndNext() {
+func (cb *CircularBuffer) DisplaySectionsMostHitAndNext(period_counter *uint) {
     cb.Lock()
     fmt.Println("Sections most hit during the last 10s:")
     hits := cb.periodHits.Value.(map[string]int)
@@ -52,6 +43,19 @@ func (cb *CircularBuffer) DisplaySectionsMostHitAndNext() {
         fmt.Printf("\t-> %s: %v hits\n",  k, v)
     }
     fmt.Println()
-    cb.periodHits.Next()
+    cb.periodHits = cb.periodHits.Next()
+    if *period_counter == config.NB_PERIOD {
+        cb.reset()
+        *period_counter = 0
+    }
     cb.Unlock()
+}
+
+// Reset the period hits counters (no mutexes because it's a private method)
+func (cb *CircularBuffer) reset() {
+    r := cb.periodHits
+    for i := 0; i < r.Len(); i++ {
+		r.Value = make(map[string]int)
+		r = r.Next()
+	}
 }
