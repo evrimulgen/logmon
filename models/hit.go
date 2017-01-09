@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Hit structure 
+// Hit structure
 type Hit struct {
 	Dt      time.Time
 	Section string

@@ -31,21 +31,21 @@ func NewCircularBuffer() *CircularBuffer {
 func (cb *CircularBuffer) HitBy(h Hit) {
 	cb.Lock()
 	period := cb.periods.Value.(*Period)
-    if time.Since(h.Dt) <= config.PERIOD {
-        period.hits[h.Section] += 1
-        period.nbHits += 1
-    }
+	if time.Since(h.Dt) <= config.PERIOD {
+		period.hits[h.Section] += 1
+		period.nbHits += 1
+	}
 	cb.totalHits[h.Section] += 1
 	cb.Unlock()
 }
 
 // Returns the total number of hits received by the circular buffer since the begining
 func (cb *CircularBuffer) TotNbHits() uint64 {
-    var totNbHits uint64
-    for _, v := range cb.totalHits {
-        totNbHits += v
-    }
-    return totNbHits
+	var totNbHits uint64
+	for _, v := range cb.totalHits {
+		totNbHits += v
+	}
+	return totNbHits
 }
 
 // Executes all monitoring tasks for a given period and launch the next one
@@ -89,8 +89,8 @@ func (cb *CircularBuffer) displayStats() {
 	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits on average):\n", config.PERIOD, averageNbHits)
 	for k, v := range period.hits {
 		if v > averageNbHits {
-            fmt.Printf("\t-> %s: %v hits (%v hits in total)\n", k, v, cb.totalHits[k])
+			fmt.Printf("\t-> %s: %v hits (%v hits in total)\n", k, v, cb.totalHits[k])
 		}
 	}
-    fmt.Println()
+	fmt.Println()
 }
