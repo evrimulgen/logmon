@@ -9,7 +9,7 @@ import (
 	"github.com/gabsn/logmon/config"
 )
 
-// Data structure holding hits information for the last 2 minutes
+// Data structure holding hits information for the last config.NB_PERIOD * config.PERIOD
 type CircularBuffer struct {
 	sync.Mutex
 	periods   *ring.Ring
@@ -82,7 +82,7 @@ func (cb *CircularBuffer) checkAlert(threshold uint64) {
 func (cb *CircularBuffer) displayStats() {
 	period := cb.periods.Value.(*Period)
 	averageNbHits := period.nbHits / uint64(len(period.hits))
-	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits in average):\n", config.PERIOD, averageNbHits)
+	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits on average):\n", config.PERIOD, averageNbHits)
 	for k, v := range period.hits {
 		if v > averageNbHits {
 			fmt.Printf("\t-> %s: %v hits\n", k, v)
