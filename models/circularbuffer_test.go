@@ -12,7 +12,7 @@ func TestAlertLogic(t *testing.T) {
 		t.Error()
 	}
 
-	cb.periods.Value = &Period{make(map[string]uint64), 30}
+	cb.periods.Value = &Period{make(map[string]uint64), 30, 103}
 	cb.checkAlert(20)
 	// An alert should be generated here because a period registered
 	// more hits than the threshold
@@ -21,7 +21,7 @@ func TestAlertLogic(t *testing.T) {
 	}
 
 	cb.periods = cb.periods.Next()
-	cb.periods.Value = &Period{make(map[string]uint64), 10}
+	cb.periods.Value = &Period{make(map[string]uint64), 10, 234}
 	cb.checkAlert(20)
 	// The alert should still be there because the total number of hits
 	// is now 40, which is above the threshold
@@ -30,7 +30,7 @@ func TestAlertLogic(t *testing.T) {
 	}
 
 	cb.periods = cb.periods.Prev()
-	cb.periods.Value = &Period{make(map[string]uint64), 5}
+	cb.periods.Value = &Period{make(map[string]uint64), 5, 243}
 	cb.checkAlert(20)
 	// The alert should be stopped because the total number of hits
 	// is now of 15, which is below the threshold
