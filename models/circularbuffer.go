@@ -40,7 +40,7 @@ func (cb *CircularBuffer) HitBy(h Hit) {
 // Executes all monitoring tasks for a given period and launch the next one
 func (cb *CircularBuffer) NextPeriod(threshold uint64) {
 	cb.Lock()
-	fmt.Println("##################################################################")
+	fmt.Println("##################################################################\n")
 	// Check alert with the given threshold
 	cb.checkAlert(threshold)
 	// Display stats related to the period

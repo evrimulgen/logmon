@@ -21,9 +21,11 @@ var (
 
 // Parse a line into a Hit struct and Hits CircularBuffer
 func parse(line string, cb *models.CircularBuffer) {
-	if fields == nil {
-		parseHeader(line)
-	} else {
+    if string(line[0]) == "#" {
+		parseHeader(line, cb)
+        return
+	}
+    if fields != nil {
 		hit, err := parseToHit(line)
 		if err != nil {
 			log.Println(err)
@@ -34,10 +36,9 @@ func parse(line string, cb *models.CircularBuffer) {
 }
 
 // Parse log header to know what fields to take in account
-func parseHeader(line string) {
+func parseHeader(line string, cb *models.CircularBuffer) {
 	if fieldsRE.MatchString(line) {
-		fields = strings.Split(line, " ")
-		fields = fields[1:]
+        fields = strings.Split(line, " ")[1:]
 	}
 }
 
