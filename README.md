@@ -42,6 +42,6 @@ Though I love Python for one-shot apps, it does not have built-in concurrency an
 
 Concerning C++, I wanted to avoid having to deal with POSIX threads and memory management...
 
-That's why I chose go: for its lightweight easy-to-use goroutines, its efficient garbage collector and also because at the moment I really enjoy working with it.
+That's why I chose go: for its lightweight easy-to-use goroutines, its efficient garbage collector and also because I enjoy working with it.
 
 
