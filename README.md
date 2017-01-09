@@ -42,6 +42,14 @@ Though I love Python for one-shot apps, it does not have built-in concurrency an
 
 Concerning C++, I wanted to avoid having to deal with POSIX threads and memory management...
 
-That's why I chose go: for its lightweight easy-to-use goroutines, its efficient garbage collector and also because I enjoy working with it.
+That's why I chose Go: for its lightweight easy-to-use goroutines, its efficient garbage collector and also because I enjoy working with it.
+
+## Possible Improvements
+
+- Build an external package in charge of parsing all type of logs (I searched for one but I decided to build the parser myself because I didn't find it. That's why the parser is not very robust...)
+
+- Build a graphical visualization tool, because it's not very clear to print all the stats directly in the console
+
+- Add some missing features built on top of fields provided by the W3C format (for example, a feature to detect the client who sends the most of requests by using the c-ip field)
 
 
