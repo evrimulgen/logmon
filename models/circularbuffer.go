@@ -70,10 +70,10 @@ func (cb *CircularBuffer) checkAlert(threshold uint64) {
 // Display statistics related to a given period
 func (cb *CircularBuffer) displayStats() {
 	period := cb.periods.Value.(*Period)
-    var averageNbHits uint64
-    if len(period.hits) > 0 {
-        averageNbHits = period.nbHits / uint64(len(period.hits))
-    }
+	var averageNbHits uint64
+	if len(period.hits) > 0 {
+		averageNbHits = period.nbHits / uint64(len(period.hits))
+	}
 	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits on average):\n", config.PERIOD, averageNbHits)
 	for k, v := range period.hits {
 		if v > averageNbHits {
