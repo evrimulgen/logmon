@@ -53,4 +53,6 @@ That's why I chose Go: for its lightweight easy-to-use goroutines, its efficient
 
 - Add some missing features built on top of fields provided by the W3C format (for example, a feature to detect the client who sends the most of requests by using the c-ip field)
 
+- Create new alerts based on status code for example
+
 
