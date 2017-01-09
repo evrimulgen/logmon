@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+    "strconv"
 
 	"github.com/gabsn/logmon/models"
 )
@@ -17,6 +18,7 @@ var (
 	dateRE   = regexp.MustCompile(`date`)
 	timeRE   = regexp.MustCompile(`time`)
 	uriRE    = regexp.MustCompile(`uri`)
+    scBytesRE = regexp.MustCompile(`sc-bytes`)
 )
 
 // Parse a line into a Hit struct and Hits CircularBuffer
@@ -44,7 +46,7 @@ func parseHeader(line string, cb *models.CircularBuffer) {
 
 // Parse a log line into the corresponding Hit struct
 func parseToHit(line string) (models.Hit, error) {
-	var date, time, uri string
+	var date, time, uri, scBytes string
 	hitFields := strings.Split(line, " ")
 	for k, v := range fields {
 		switch {
@@ -54,7 +56,9 @@ func parseToHit(line string) (models.Hit, error) {
 			time = hitFields[k]
 		case uriRE.MatchString(v):
 			uri = hitFields[k]
-		}
+        case scBytesRE.MatchString(v):
+            scBytes = hitFields[k]
+        }
 	}
 	dt, err := getDateTime(date, time)
 	if err != nil {
@@ -64,7 +68,11 @@ func parseToHit(line string) (models.Hit, error) {
 	if err != nil {
 		return models.Hit{}, err
 	}
-	return models.Hit{dt, section}, nil
+    bytes, err := strconv.ParseUint(scBytes, 10, 64)
+    if err != nil {
+        return models.Hit{}, err
+    }
+	return models.Hit{dt, section, bytes}, nil
 }
 
 // Build a time.Time object from date and time fields extracted

@@ -13,7 +13,7 @@ import (
 type CircularBuffer struct {
 	sync.Mutex
 	periods   *ring.Ring
-	totalHits map[string]uint64
+    total *Total
 	alert     bool
 }
 
@@ -24,25 +24,27 @@ func NewCircularBuffer() *CircularBuffer {
 		r.Value = NewPeriod()
 		r = r.Next()
 	}
-	return &CircularBuffer{sync.Mutex{}, r, make(map[string]uint64), false}
+	return &CircularBuffer{sync.Mutex{}, r, NewTotal(), false}
 }
 
-// Increments the counter of hits
+// Record all information of the hit into the circular buffer
 func (cb *CircularBuffer) HitBy(h Hit) {
 	cb.Lock()
 	period := cb.periods.Value.(*Period)
 	if time.Since(h.Dt) <= config.PERIOD {
 		period.hits[h.Section] += 1
 		period.nbHits += 1
+        period.nbSCBytes += h.SCBytes
 	}
-	cb.totalHits[h.Section] += 1
+	cb.total.hits[h.Section] += 1
+    cb.total.scBytes += h.SCBytes
 	cb.Unlock()
 }
 
 // Returns the total number of hits received by the circular buffer since the begining
 func (cb *CircularBuffer) TotNbHits() uint64 {
 	var totNbHits uint64
-	for _, v := range cb.totalHits {
+	for _, v := range cb.total.hits {
 		totNbHits += v
 	}
 	return totNbHits
@@ -81,15 +83,21 @@ func (cb *CircularBuffer) checkAlert(threshold uint64) {
 
 // Display statistics related to a given period
 func (cb *CircularBuffer) displayStats() {
+    fmt.Println("[INFO] Global stats:")
+    fmt.Printf("\t%v hits received by the server\n", cb.TotNbHits())
+    fmt.Printf("\t%v bytes sent by the server\n", cb.total.scBytes)
 	period := cb.periods.Value.(*Period)
 	var averageNbHits uint64
 	if len(period.hits) > 0 {
 		averageNbHits = period.nbHits / uint64(len(period.hits))
 	}
-	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits on average):\n", config.PERIOD, averageNbHits)
+    fmt.Println("[INFO] Period stats:")
+    fmt.Printf("\t%v hits on average\n", averageNbHits)
+    fmt.Printf("\t%v bytes sent by the server\n", period.nbSCBytes)
+	fmt.Printf("[INFO] Sections most hit during the last %v:\n", config.PERIOD)
 	for k, v := range period.hits {
 		if v > averageNbHits {
-			fmt.Printf("\t-> %s: %v hits (%v hits in total)\n", k, v, cb.totalHits[k])
+			fmt.Printf("\t-> %s: %v hits (%v hits in total)\n", k, v, cb.total.hits[k])
 		}
 	}
 	fmt.Println()

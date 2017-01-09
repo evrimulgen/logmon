@@ -8,4 +8,5 @@ import (
 type Hit struct {
 	Dt      time.Time
 	Section string
+    SCBytes uint64
 }
