@@ -28,7 +28,7 @@ You can run ```go test``` in the [models](models) directory to test the Alert lo
 
 I used two goroutines to manage the two main concurent tasks:
 
-1/ The first one represented by the [__feeder package__](feeder) is to consume the log file, parse it into a Hit struct and sending it to the circular buffer.
+1/ The first one represented by the [__feeder package__](feeder) is to consume the log file, parse it into a Hit struct and then send it to the circular buffer.
 
 2/ The second one represented by the [__controller package__](controller) is to monitor and alert the user if the number of hits becomes greater than the threshold.
 
