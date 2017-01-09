@@ -20,7 +20,8 @@ You can edit your preferences concerning the period of refreshment in the [confi
 
 ## Testing
 
-You can run ```go test``` in the [models](models) directory to test the Alert logic
+Run ```go test ./...``` in the root directory to run all test units.
+You will find the test of the alert logic in the [models](models) directory.
 
 ## Project Architecture
 
