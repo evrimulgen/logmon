@@ -40,6 +40,7 @@ func (cb *CircularBuffer) HitBy(h Hit) {
 // Executes all monitoring tasks for a given period and launch the next one
 func (cb *CircularBuffer) NextPeriod(threshold uint64) {
 	cb.Lock()
+	fmt.Println("##################################################################")
 	// Check alert with the given threshold
 	cb.checkAlert(threshold)
 	// Display stats related to the period
@@ -77,8 +78,8 @@ func (cb *CircularBuffer) displayStats() {
 	fmt.Printf("[INFO] Sections most hit during the last %v (%v hits on average):\n", config.PERIOD, averageNbHits)
 	for k, v := range period.hits {
 		if v > averageNbHits {
-			fmt.Printf("\t-> %s: %v hits\n", k, v)
+            fmt.Printf("\t-> %s: %v hits (%v hit in total)\n", k, v, cb.totalHits[k])
 		}
 	}
-	fmt.Println()
+    fmt.Println()
 }
