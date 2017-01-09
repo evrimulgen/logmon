@@ -4,6 +4,8 @@ import (
 	"container/ring"
     "sync"
     "fmt"
+
+    "github.com/gabsn/logmon/config"
 )
 
 // Data structure holding hits information for the last 2 minutes
@@ -13,11 +15,22 @@ type CircularBuffer struct {
 	totalHits map[string]uint
 }
 
-// Returns a new initialized circular buffer
-func NewCircularBuffer(nbPeriod int) *CircularBuffer {
-	r := ring.New(nbPeriod)
+// Data structure holding all information about a given period
+type Period struct {
+    hits map[string]uint
+    nbHits uint
+}
+
+// Returns a new intialized Period
+func NewPeriod() *Period {
+    return &Period{make(map[string]uint), 0}
+}
+
+// Returns a new initialized CircularBuffer
+func NewCircularBuffer() *CircularBuffer {
+	r := ring.New(config.NB_PERIOD)
 	for i := 0; i < r.Len(); i++ {
-		r.Value = make(map[string]uint)
+		r.Value = NewPeriod()
 		r = r.Next()
 	}
 	return &CircularBuffer{sync.Mutex{}, r, make(map[string]uint)}
@@ -26,8 +39,9 @@ func NewCircularBuffer(nbPeriod int) *CircularBuffer {
 // Increments the counter of hits
 func (cb *CircularBuffer) HitBy(h Hit) {
     cb.Lock()
-    //fmt.Println("Hitting section:", h.Section)
-    cb.periodHits.Value.(map[string]uint)[h.Section] += 1
+    period := cb.periodHits.Value.(*Period)
+    period.hits[h.Section] += 1
+    period.nbHits += 1
     cb.totalHits[h.Section] += 1
     cb.Unlock()
 }
@@ -37,24 +51,16 @@ func (cb *CircularBuffer) DisplayStatsAndNext() {
     cb.Lock()
     cb.displayStats()
     cb.periodHits = cb.periodHits.Next()
-    cb.periodHits.Value = make(map[string]uint)
+    cb.periodHits.Value = NewPeriod()
     cb.Unlock()
 }
 
+// Display statistics related to a given period
 func (cb *CircularBuffer) displayStats() {
     fmt.Println("Sections most hit during the last 10s:")
-    hits := cb.periodHits.Value.(map[string]uint)
+    hits := cb.periodHits.Value.(*Period).hits
     for k, v := range hits {
         fmt.Printf("\t-> %s: %v hits\n",  k, v)
     }
     fmt.Println()
-}
-
-// Reset the period hits counters (no mutexes because it's a private method)
-func (cb *CircularBuffer) reset() {
-    r := cb.periodHits
-    for i := 0; i < r.Len(); i++ {
-		r.Value = make(map[string]uint)
-		r = r.Next()
-	}
 }

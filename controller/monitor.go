@@ -7,8 +7,9 @@ import (
     "github.com/gabsn/logmon/config"
 )
 
-func Monitor(cb *models.CircularBuffer) {
+func Monitor(threshold int, cb *models.CircularBuffer) {
     for _ = range time.Tick(config.PERIOD) {
+        //cb.checkAlert(threshold)
         cb.DisplayStatsAndNext()
     }
 }
