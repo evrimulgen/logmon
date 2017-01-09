@@ -11,6 +11,7 @@ import (
 	"github.com/gabsn/logmon/models"
 )
 
+// Contains fields as specified in the W3C log header
 var fields []string
 
 var (
