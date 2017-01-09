@@ -12,9 +12,9 @@ import (
 // Data structure holding hits information for the last config.NB_PERIOD * config.PERIOD
 type CircularBuffer struct {
 	sync.Mutex
-	periods   *ring.Ring
-    total *Total
-	alert     bool
+	periods *ring.Ring
+	total   *Total
+	alert   bool
 }
 
 // Returns a new initialized CircularBuffer
@@ -34,10 +34,10 @@ func (cb *CircularBuffer) HitBy(h Hit) {
 	if time.Since(h.Dt) <= config.PERIOD {
 		period.hits[h.Section] += 1
 		period.nbHits += 1
-        period.nbSCBytes += h.SCBytes
+		period.nbSCBytes += h.SCBytes
 	}
 	cb.total.hits[h.Section] += 1
-    cb.total.scBytes += h.SCBytes
+	cb.total.scBytes += h.SCBytes
 	cb.Unlock()
 }
 
@@ -83,17 +83,17 @@ func (cb *CircularBuffer) checkAlert(threshold uint64) {
 
 // Display statistics related to a given period
 func (cb *CircularBuffer) displayStats() {
-    fmt.Println("[INFO] Global stats:")
-    fmt.Printf("\t%v hits received by the server\n", cb.TotNbHits())
-    fmt.Printf("\t%v bytes sent by the server\n", cb.total.scBytes)
+	fmt.Println("[INFO] Global stats:")
+	fmt.Printf("\t%v hits received by the server\n", cb.TotNbHits())
+	fmt.Printf("\t%v bytes sent by the server\n", cb.total.scBytes)
 	period := cb.periods.Value.(*Period)
 	var averageNbHits uint64
 	if len(period.hits) > 0 {
 		averageNbHits = period.nbHits / uint64(len(period.hits))
 	}
-    fmt.Println("[INFO] Period stats:")
-    fmt.Printf("\t%v hits on average\n", averageNbHits)
-    fmt.Printf("\t%v bytes sent by the server\n", period.nbSCBytes)
+	fmt.Println("[INFO] Period stats:")
+	fmt.Printf("\t%v hits on average\n", averageNbHits)
+	fmt.Printf("\t%v bytes sent by the server\n", period.nbSCBytes)
 	fmt.Printf("[INFO] Sections most hit during the last %v:\n", config.PERIOD)
 	for k, v := range period.hits {
 		if v > averageNbHits {

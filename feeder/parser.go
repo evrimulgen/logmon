@@ -4,9 +4,9 @@ import (
 	"errors"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
-    "strconv"
 
 	"github.com/gabsn/logmon/models"
 )
@@ -14,11 +14,11 @@ import (
 var fields []string
 
 var (
-	fieldsRE = regexp.MustCompile(`#Fields: (\S+\s?)+`)
-	dateRE   = regexp.MustCompile(`date`)
-	timeRE   = regexp.MustCompile(`time`)
-	uriRE    = regexp.MustCompile(`uri`)
-    scBytesRE = regexp.MustCompile(`sc-bytes`)
+	fieldsRE  = regexp.MustCompile(`#Fields: (\S+\s?)+`)
+	dateRE    = regexp.MustCompile(`date`)
+	timeRE    = regexp.MustCompile(`time`)
+	uriRE     = regexp.MustCompile(`uri`)
+	scBytesRE = regexp.MustCompile(`sc-bytes`)
 )
 
 // Parse a line into a Hit struct and Hits CircularBuffer
@@ -56,9 +56,9 @@ func parseToHit(line string) (models.Hit, error) {
 			time = hitFields[k]
 		case uriRE.MatchString(v):
 			uri = hitFields[k]
-        case scBytesRE.MatchString(v):
-            scBytes = hitFields[k]
-        }
+		case scBytesRE.MatchString(v):
+			scBytes = hitFields[k]
+		}
 	}
 	dt, err := getDateTime(date, time)
 	if err != nil {
@@ -68,10 +68,10 @@ func parseToHit(line string) (models.Hit, error) {
 	if err != nil {
 		return models.Hit{}, err
 	}
-    bytes, err := strconv.ParseUint(scBytes, 10, 64)
-    if err != nil {
-        return models.Hit{}, err
-    }
+	bytes, err := strconv.ParseUint(scBytes, 10, 64)
+	if err != nil {
+		return models.Hit{}, err
+	}
 	return models.Hit{dt, section, bytes}, nil
 }
 
