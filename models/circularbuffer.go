@@ -31,8 +31,10 @@ func NewCircularBuffer() *CircularBuffer {
 func (cb *CircularBuffer) HitBy(h Hit) {
 	cb.Lock()
 	period := cb.periods.Value.(*Period)
-	period.hits[h.Section] += 1
-	period.nbHits += 1
+    if time.Since(h.Dt) <= config.PERIOD {
+        period.hits[h.Section] += 1
+        period.nbHits += 1
+    }
 	cb.totalHits[h.Section] += 1
 	cb.Unlock()
 }

@@ -79,7 +79,7 @@ func getDateTime(d, t string) (time.Time, error) {
 	}
 	hour, minute, second := timee.Clock()
 	year, month, day := date.Date()
-	return time.Date(year, month, day, hour, minute, second, 0, time.UTC), nil
+	return time.Date(year, month, day, hour, minute, second, 0, time.Now().Location()), nil
 }
 
 // Check if the resource is valid and return the section part
