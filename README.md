@@ -24,6 +24,8 @@ You can run ```go test``` in the models directory to test the Alert logic
 
 ## Project Architecture
 
+![logmon architecture](docs/logmon_architecture.png)
+
 I used two goroutines to manage the two main concurent tasks:
 
 1/ The first one represented by the __feeder package__ is to consume the log file, parse it into a Hit struct and sending it to the circular buffer.
