@@ -18,7 +18,7 @@ func main() {
 		log.Fatalln("Usage:\n\n\tlogmon [logPath] [threshold]\n")
 	}
 	logPath := os.Args[1]
-	threshold, err := strconv.Atoi(os.Args[2])
+	threshold, err := strconv.ParseUint(os.Args[2], 10, 64)
 	if err != nil {
 		log.Fatalln(err)
 	}
