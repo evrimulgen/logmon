@@ -12,15 +12,15 @@ A simple console program that monitors HTTP traffic on your machine.
 ```bash
 logmon [logPath] [threshold]
 ```
-4/ You can go to the loggen directory and type ```make run``` to generate a log.txt file
+4/ You can go to the [loggen](loggen) directory and type ```make run``` to generate a log.txt file
 
 ## Configuration
 
-You can edit your preferences concerning the period of refreshment in the config/global.go file.
+You can edit your preferences concerning the period of refreshment in the [config/global.go](config/global.go) file.
 
 ## Testing
 
-You can run ```go test``` in the models directory to test the Alert logic
+You can run ```go test``` in the [models](models) directory to test the Alert logic
 
 ## Project Architecture
 
@@ -28,11 +28,11 @@ You can run ```go test``` in the models directory to test the Alert logic
 
 I used two goroutines to manage the two main concurent tasks:
 
-1/ The first one represented by the __feeder package__ is to consume the log file, parse it into a Hit struct and sending it to the circular buffer.
+1/ The first one represented by the [__feeder package__](feeder) is to consume the log file, parse it into a Hit struct and sending it to the circular buffer.
 
-2/ The second one represented by the __controller package__ is to monitor and alert the user if the number of hits becomes greater than the threshold.
+2/ The second one represented by the [__controller package__](controller) is to monitor and alert the user if the number of hits becomes greater than the threshold.
 
-Finally, I used a __circular buffer__ to store information about hits. Since the two goroutines are concurrently talking to the circular buffer I used a mutex to protect it against race conditions.
+Finally, I used a [__circular buffer__](models/circularbuffer.go) to store information about hits. Since the two goroutines are concurrently talking to the circular buffer I used a mutex to protect it against race conditions.
 
 ## Why go ?
 
