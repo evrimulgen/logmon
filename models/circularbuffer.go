@@ -27,7 +27,7 @@ func NewCircularBuffer() *CircularBuffer {
 	return &CircularBuffer{sync.Mutex{}, r, NewTotal(), false}
 }
 
-// Record all information of the hit into the circular buffer
+// Records all information of the hit into the circular buffer
 func (cb *CircularBuffer) HitBy(h Hit) {
 	cb.Lock()
 	period := cb.periods.Value.(*Period)
